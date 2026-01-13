@@ -1,6 +1,5 @@
 package com.app.savings;
 
-import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.Random;
 import java.util.UUID;
@@ -40,7 +39,7 @@ public class SavingsApplication {
 
 			TypePago tiposPagos[] = TypePago.values();
 			Random random = new Random();
-			//Cada estudiante tiene 10 pagos aleatorios
+			// Cada estudiante tiene 10 pagos aleatorios
 			estudianteRepository.findAll().forEach(estudiante -> {
 				for (int i = 0; i < 10; i++) {
 					int index = random.nextInt(tiposPagos.length);
