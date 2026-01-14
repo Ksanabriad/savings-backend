@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Random;
 import java.util.UUID;
 
+import com.app.savings.services.UsuarioService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,9 +25,13 @@ public class SavingsApplication {
 	}
 
 	@Bean
-	// Example CommandLineRunner to execute code at startup
-	CommandLineRunner commandLineRunner(EstudianteRepository estudianteRepository, PagoRepository pagoRepository) {
+	CommandLineRunner commandLineRunner(EstudianteRepository estudianteRepository, PagoRepository pagoRepository,
+			UsuarioService usuarioService) {
 		return args -> {
+			// Init Admin User
+			usuarioService.initAdmin();
+
+			// Init Data
 			estudianteRepository.save(Estudiante.builder().id(UUID.randomUUID().toString()).nombre("Katherin")
 					.apellido("Sanabria").codigo("12345").programaId("LTA1").build());
 			estudianteRepository.save(Estudiante.builder().id(UUID.randomUUID().toString()).nombre("Jose")
