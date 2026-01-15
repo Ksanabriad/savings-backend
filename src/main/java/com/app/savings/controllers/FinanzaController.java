@@ -22,6 +22,11 @@ public class FinanzaController {
     @Autowired
     private FinanzaService finanzaService;
 
+    @GetMapping
+    public List<Finanza> listarTodasLasFinanzas() {
+        return finanzaService.listarTodasLasFinanzas();
+    }
+
     @GetMapping("/{username}")
     public List<Finanza> listarFinanzas(@PathVariable String username) {
         return finanzaService.listarFinanzasPorUsuario(username);
@@ -38,13 +43,4 @@ public class FinanzaController {
         return finanzaService.saveFinanza(file, concepto, cantidad, tipo, medio, fecha, username);
     }
 
-    @GetMapping(value = "/archivo/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
-    public byte[] obtenerArchivo(@PathVariable Long id) throws IOException {
-        return finanzaService.getArchivoPorId(id);
-    }
-
-    @DeleteMapping("/{id}")
-    public void eliminarFinanza(@PathVariable Long id) {
-        finanzaService.eliminarFinanza(id);
-    }
 }

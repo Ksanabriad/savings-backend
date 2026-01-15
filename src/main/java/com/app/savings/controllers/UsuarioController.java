@@ -5,6 +5,7 @@ import com.app.savings.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -33,5 +34,10 @@ public class UsuarioController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping
+    public List<Usuario> listarTodos() {
+        return usuarioService.findAll();
     }
 }
