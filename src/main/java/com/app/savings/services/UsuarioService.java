@@ -14,8 +14,8 @@ public class UsuarioService {
     @Autowired
     private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
-    public Usuario login(String username, String password) {
-        return usuarioRepository.findByUsername(username)
+    public Usuario login(String usernameOrEmail, String password) {
+        return usuarioRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
                 .filter(u -> passwordEncoder.matches(password, u.getPassword()))
                 .orElse(null);
     }
