@@ -11,18 +11,30 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // Login simple devolviendo el usuario si coincide la contraseña, null si no
+    @Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     public Usuario login(String username, String password) {
         return usuarioRepository.findByUsername(username)
-                .filter(u -> u.getPassword().equals(password))
+                .filter(u -> passwordEncoder.matches(password, u.getPassword()))
                 .orElse(null);
     }
 
     public Usuario register(Usuario usuario) {
+        if (usuarioRepository.findByUsername(usuario.getUsername()).isPresent()) {
+            throw new RuntimeException("El nombre de usuario ya existe");
+        }
+        if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
+            throw new RuntimeException("El email ya existe");
+        }
+
         // Por defecto rol USER si no viene especificado
         if (usuario.getRol() == null || usuario.getRol().isEmpty()) {
             usuario.setRol("USER");
         }
+
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+
         return usuarioRepository.save(usuario);
     }
 
@@ -30,7 +42,7 @@ public class UsuarioService {
         if (usuarioRepository.findByUsername("admin").isEmpty()) {
             Usuario admin = Usuario.builder()
                     .username("admin")
-                    .password("admin1234")
+                    .password(passwordEncoder.encode("admin1234"))
                     .email("admin@easysave.com")
                     .rol("ADMIN")
                     .build();

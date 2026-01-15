@@ -26,13 +26,12 @@ public class UsuarioController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Usuario> register(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> register(@RequestBody Usuario usuario) {
         try {
             Usuario nuevoUsuario = usuarioService.register(usuario);
             return ResponseEntity.ok(nuevoUsuario);
         } catch (Exception e) {
-            // Manejo básico de errores (ej. duplicados)
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
