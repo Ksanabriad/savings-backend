@@ -2,7 +2,7 @@ package com.app.savings.dtos;
 
 import java.time.LocalDate;
 
-import com.app.savings.enums.TypePago;
+import com.app.savings.enums.TipoFinanza;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 public class NewPagoDto {
 
     private Double cantidad;
-    private TypePago typePago;
-    private LocalDate date;
+    private TipoFinanza tipoFinanza;
+    private LocalDate fecha;
     private String codigoEstudiante;
 
 }
