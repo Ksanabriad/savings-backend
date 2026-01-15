@@ -66,6 +66,10 @@ public class FinanzaService {
         return finanzaRepository.findByUsuarioUsername(username);
     }
 
+    public List<Finanza> listarTodasLasFinanzas() {
+        return finanzaRepository.findAll();
+    }
+
     public byte[] getArchivoPorId(Long id) throws IOException {
         Finanza finanza = finanzaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Finanza no encontrada"));

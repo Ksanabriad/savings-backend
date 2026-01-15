@@ -4,6 +4,7 @@ import com.app.savings.entities.Usuario;
 import com.app.savings.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -49,5 +50,13 @@ public class UsuarioService {
             usuarioRepository.save(admin);
             System.out.println("Usuario ADMIN creado por defecto");
         }
+    }
+
+    public java.util.List<Usuario> findAll() {
+        return usuarioRepository.findAll();
+    }
+
+    public Optional<Usuario> findByUsername(String username) {
+        return usuarioRepository.findByUsername(username);
     }
 }
