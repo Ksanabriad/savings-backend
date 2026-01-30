@@ -22,6 +22,7 @@ public class SecurityConfig {
                         .requestMatchers("/estudiantes/**", "/pagos/**", "/pagoFile/**").permitAll()
                         .requestMatchers("/api/finanzas/**").permitAll()
                         .requestMatchers("/api/conceptos/**").permitAll()
+                        .requestMatchers("/api/informes/**").permitAll()
                         .anyRequest().authenticated());
         return http.build();
     }
