@@ -1,35 +1,34 @@
 package com.app.savings.entities;
 
-import java.time.LocalDate;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Finanza {
+public class HistorialInforme {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Concepto concepto;
-    private LocalDate fecha;
-    private double cantidad;
-
-    @ManyToOne
-    private TipoFinanza tipo;
-
-    @ManyToOne
-    private MedioPago medio;
-
-    private String file;
+    private LocalDate fechaGeneracion;
+    private String nombreArchivo;
 
     @ManyToOne
     private Usuario usuario;
+
+    @OneToMany
+    private List<Finanza> finanzas;
+
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] contenido;
 }

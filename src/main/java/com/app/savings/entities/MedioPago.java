@@ -1,6 +1,5 @@
 package com.app.savings.entities;
 
-import java.time.LocalDate;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,24 +11,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Finanza {
+public class MedioPago {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    private Concepto concepto;
-    private LocalDate fecha;
-    private double cantidad;
-
-    @ManyToOne
-    private TipoFinanza tipo;
-
-    @ManyToOne
-    private MedioPago medio;
-
-    private String file;
-
-    @ManyToOne
-    private Usuario usuario;
+    @Column(unique = true)
+    private String nombre;
 }

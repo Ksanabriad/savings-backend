@@ -1,8 +1,6 @@
 package com.app.savings.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +21,7 @@ public class Usuario {
     private String email;
 
     private String password;
-    private String rol; // ADMIN y USER
+    @ManyToOne
+    private PerfilUsuario perfil;
 
 }
