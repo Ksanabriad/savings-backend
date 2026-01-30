@@ -12,12 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.app.savings.entities.Concepto;
 import com.app.savings.entities.Finanza;
+import com.app.savings.entities.MedioPago;
+import com.app.savings.entities.TipoFinanza;
 import com.app.savings.entities.Usuario;
-import com.app.savings.enums.MedioPago;
-import com.app.savings.enums.TipoFinanza;
-import com.app.savings.repository.FinanzaRepository;
-import com.app.savings.repository.UsuarioRepository;
+
+import com.app.savings.repository.*;
 
 @Service
 public class FinanzaService {
@@ -28,8 +29,17 @@ public class FinanzaService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public Finanza saveFinanza(MultipartFile file, String concepto, double cantidad,
-            TipoFinanza tipo, MedioPago medio, LocalDate date,
+    @Autowired
+    private TipoFinanzaRepository tipoFinanzaRepository;
+
+    @Autowired
+    private MedioPagoRepository medioPagoRepository;
+
+    @Autowired
+    private ConceptoRepository conceptoRepository;
+
+    public Finanza saveFinanza(MultipartFile file, String conceptoNombre, double cantidad,
+            String tipoNombre, String medioNombre, LocalDate date,
             String username) throws IOException {
 
         String fileName = "";
@@ -48,6 +58,9 @@ public class FinanzaService {
         }
 
         Usuario usuario = usuarioRepository.findByUsername(username).orElse(null);
+        TipoFinanza tipo = tipoFinanzaRepository.findByNombre(tipoNombre).orElse(null);
+        MedioPago medio = medioPagoRepository.findByNombre(medioNombre).orElse(null);
+        Concepto concepto = conceptoRepository.findByNombre(conceptoNombre).orElse(null);
 
         Finanza finanza = Finanza.builder()
                 .concepto(concepto)

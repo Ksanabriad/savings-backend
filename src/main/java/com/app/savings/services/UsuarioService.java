@@ -1,6 +1,7 @@
 package com.app.savings.services;
 
 import com.app.savings.entities.Usuario;
+import com.app.savings.repository.PerfilUsuarioRepository;
 import com.app.savings.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,9 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PerfilUsuarioRepository perfilUsuarioRepository;
 
     @Autowired
     private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
@@ -30,8 +34,8 @@ public class UsuarioService {
         }
 
         // Por defecto rol USER si no viene especificado
-        if (usuario.getRol() == null || usuario.getRol().isEmpty()) {
-            usuario.setRol("USER");
+        if (usuario.getPerfil() == null) {
+            usuario.setPerfil(perfilUsuarioRepository.findByNombre("USER").orElse(null));
         }
 
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
@@ -45,10 +49,21 @@ public class UsuarioService {
                     .username("admin")
                     .password(passwordEncoder.encode("admin1234"))
                     .email("admin@easysave.com")
-                    .rol("ADMIN")
+                    .perfil(perfilUsuarioRepository.findByNombre("ADMIN").orElse(null))
                     .build();
             usuarioRepository.save(admin);
             System.out.println("Usuario ADMIN creado por defecto");
+        }
+
+        if (usuarioRepository.findByUsername("katherin").isEmpty()) {
+            Usuario user = Usuario.builder()
+                    .username("katherin")
+                    .password(passwordEncoder.encode("kate1234"))
+                    .email("katherin@easysave.com")
+                    .perfil(perfilUsuarioRepository.findByNombre("USER").orElse(null))
+                    .build();
+            usuarioRepository.save(user);
+            System.out.println("Usuario KATHERIN creado por defecto");
         }
     }
 
