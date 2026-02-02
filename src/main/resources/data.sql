@@ -151,42 +151,4 @@ INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_us
 SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 1500, '2025-12-30', 1, 3, 'katherin'
 WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2025-12-30' AND usuario_username = 'katherin');
 
--- Historial Informes
-INSERT INTO historial_informe (nombre_archivo, fecha_generacion, usuario_username, contenido)
-SELECT 'EasySave_Reporte_Octubre.pdf','2025-10-31', 'katherin', X''
-WHERE NOT EXISTS (SELECT 1 FROM historial_informe WHERE nombre_archivo = 'EasySave_Reporte_Octubre.pdf');
 
-INSERT INTO historial_informe (nombre_archivo, fecha_generacion,usuario_username, contenido)
-SELECT 'EasySave_Reporte_Noviembre.pdf', '2025-11-30', 'katherin', X''
-WHERE NOT EXISTS (SELECT 1 FROM historial_informe WHERE nombre_archivo = 'EasySave_Reporte_Noviembre.pdf');
-
-INSERT INTO historial_informe (nombre_archivo, fecha_generacion, usuario_username, contenido)
-SELECT 'EasySave_Reporte_Diciembre.pdf', '2025-12-31', 'katherin', X''
-WHERE NOT EXISTS (SELECT 1 FROM historial_informe WHERE nombre_archivo = 'EasySave_Reporte_Diciembre.pdf');
-
--- Relación Manual en data.sql (ManyToMany)
--- Nota: H2 genera por defecto la tabla 'historial_informe_finanzas' con columnas 'historial_informe_id' y 'finanzas_id'
-
--- Relacionar el reporte de Octubre de katherin con sus movimientos de Octubre
-INSERT INTO historial_informe_finanzas (historial_informe_id, finanzas_id)
-SELECT h.id, f.id
-FROM historial_informe h, finanza f
-WHERE h.nombre_archivo = 'EasySave_Reporte_Octubre.pdf'
-AND f.usuario_username = 'katherin'
-AND f.fecha BETWEEN '2025-10-01' AND '2025-10-31';
-
--- Relacionar el reporte de Noviembre de katherin con sus movimientos de Noviembre
-INSERT INTO historial_informe_finanzas (historial_informe_id, finanzas_id)
-SELECT h.id, f.id
-FROM historial_informe h, finanza f
-WHERE h.nombre_archivo = 'EasySave_Reporte_Noviembre.pdf'
-AND f.usuario_username = 'katherin'
-AND f.fecha BETWEEN '2025-11-01' AND '2025-11-30';
-
--- Relacionar el reporte de Diciembre de katherin con sus movimientos de Diciembre
-INSERT INTO historial_informe_finanzas (historial_informe_id, finanzas_id)
-SELECT h.id, f.id
-FROM historial_informe h, finanza f
-WHERE h.nombre_archivo = 'EasySave_Reporte_Diciembre.pdf'
-AND f.usuario_username = 'katherin'
-AND f.fecha BETWEEN '2025-12-01' AND '2025-12-31';
