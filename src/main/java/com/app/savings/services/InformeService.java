@@ -50,10 +50,17 @@ public class InformeService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         List<Finanza> finanzas = finanzaRepository.findByUsuarioAndMesAndAnio(usuario, mes, anio);
 
+        LocalDate lastDayOfMonth = java.time.YearMonth.of(anio, mes).atEndOfMonth();
+        if (LocalDate.now().compareTo(lastDayOfMonth) <= 0) {
+            throw new RuntimeException("El informe solo se puede generar al finalizar el mes.");
+        }
+
         String mesNombre = java.time.Month.of(mes).getDisplayName(TextStyle.FULL, Locale.forLanguageTag("es-ES"));
-        String nombreArchivo = "Extracto_" + username + "_" + mesNombre + "_" + anio + ".pdf";
-        LocalDate fechaGeneracion = LocalDate.of(anio, mes, 1)
-                .with(java.time.temporal.TemporalAdjusters.lastDayOfMonth());
+        // Capitalize first letter
+        mesNombre = mesNombre.substring(0, 1).toUpperCase() + mesNombre.substring(1).toLowerCase();
+
+        String nombreArchivo = username + "_" + mesNombre + "_" + anio + ".pdf";
+        LocalDate fechaGeneracion = lastDayOfMonth;
 
         byte[] pdfContent = generarContenidoPDF(usuario, mesNombre, anio, finanzas, fechaGeneracion);
 
@@ -66,6 +73,48 @@ public class InformeService {
                 .build();
 
         return historialInformeRepository.save(historial);
+    }
+
+    public void generarInformesFaltantes() {
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        for (Usuario usuario : usuarios) {
+            Finanza oldesFinanza = finanzaRepository.findTopByUsuarioOrderByFechaAsc(usuario);
+            if (oldesFinanza != null) {
+                LocalDate fechaInicio = oldesFinanza.getFecha();
+                LocalDate fechaActual = LocalDate.now();
+
+                LocalDate iterador = LocalDate.of(fechaInicio.getYear(), fechaInicio.getMonth(), 1);
+
+                while (iterador.isBefore(fechaActual)) {
+                    // Check if month is completed
+                    LocalDate finDeMes = iterador.with(java.time.temporal.TemporalAdjusters.lastDayOfMonth());
+
+                    if (fechaActual.isAfter(finDeMes)) {
+                        // Candidate for report
+                        String mesNombre = iterador.getMonth().getDisplayName(TextStyle.FULL,
+                                Locale.forLanguageTag("es-ES"));
+                        mesNombre = mesNombre.substring(0, 1).toUpperCase() + mesNombre.substring(1).toLowerCase();
+                        String nombreArchivo = usuario.getUsername() + "_" + mesNombre + "_" + iterador.getYear()
+                                + ".pdf";
+
+                        if (!historialInformeRepository.existsByUsuarioAndNombreArchivo(usuario, nombreArchivo)) {
+                            // Generate it
+                            try {
+                                generarInformeMensual(usuario.getUsername(), iterador.getMonthValue(),
+                                        iterador.getYear());
+                                System.out.println(
+                                        "Informe generado para: " + usuario.getUsername() + " - " + nombreArchivo);
+                            } catch (Exception e) {
+                                System.err.println("Error generando informe auto para " + usuario.getUsername() + ": "
+                                        + e.getMessage());
+                            }
+                        }
+                    }
+                    // Next month
+                    iterador = iterador.plusMonths(1);
+                }
+            }
+        }
     }
 
     public byte[] generarContenidoPDF(Usuario usuario, String mesNombre, int anio, List<Finanza> finanzas,

@@ -33,8 +33,11 @@ public class UsuarioService {
             throw new RuntimeException("El email ya existe");
         }
 
-        // Por defecto rol USER si no viene especificado
-        if (usuario.getPerfil() == null) {
+        // Gestionar el perfil/rol
+        if (usuario.getPerfil() != null && usuario.getPerfil().getNombre() != null) {
+            usuario.setPerfil(perfilUsuarioRepository.findByNombre(usuario.getPerfil().getNombre())
+                    .orElse(perfilUsuarioRepository.findByNombre("USER").orElse(null)));
+        } else {
             usuario.setPerfil(perfilUsuarioRepository.findByNombre("USER").orElse(null));
         }
 
@@ -69,6 +72,47 @@ public class UsuarioService {
 
     public java.util.List<Usuario> findAll() {
         return usuarioRepository.findAll();
+    }
+
+    public Usuario findById(String id) {
+        return usuarioRepository.findById(id).orElse(null);
+    }
+
+    public Usuario updateUsuario(String id, Usuario usuarioActualizado) {
+        Usuario usuarioExistente = usuarioRepository.findById(id).orElse(null);
+        if (usuarioExistente == null) {
+            return null;
+        }
+
+        // Validar que el username no esté tomado por otro usuario
+        if (!usuarioExistente.getUsername().equals(usuarioActualizado.getUsername())) {
+            if (usuarioRepository.findByUsername(usuarioActualizado.getUsername()).isPresent()) {
+                throw new RuntimeException("El nombre de usuario ya existe");
+            }
+        }
+
+        // Validar que el email no esté tomado por otro usuario
+        if (!usuarioExistente.getEmail().equals(usuarioActualizado.getEmail())) {
+            if (usuarioRepository.findByEmail(usuarioActualizado.getEmail()).isPresent()) {
+                throw new RuntimeException("El email ya existe");
+            }
+        }
+
+        usuarioExistente.setUsername(usuarioActualizado.getUsername());
+        usuarioExistente.setEmail(usuarioActualizado.getEmail());
+
+        // Si hay una nueva contraseña, actualizarla
+        if (usuarioActualizado.getPassword() != null && !usuarioActualizado.getPassword().isEmpty()) {
+            usuarioExistente.setPassword(passwordEncoder.encode(usuarioActualizado.getPassword()));
+        }
+
+        // Actualizar perfil
+        if (usuarioActualizado.getPerfil() != null) {
+            usuarioExistente.setPerfil(
+                    perfilUsuarioRepository.findByNombre(usuarioActualizado.getPerfil().getNombre()).orElse(null));
+        }
+
+        return usuarioRepository.save(usuarioExistente);
     }
 
     public Optional<Usuario> findByUsername(String username) {
