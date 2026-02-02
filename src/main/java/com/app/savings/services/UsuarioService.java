@@ -1,13 +1,14 @@
 package com.app.savings.services;
 
 import com.app.savings.entities.Usuario;
-import com.app.savings.repository.PerfilUsuarioRepository;
-import com.app.savings.repository.UsuarioRepository;
+import com.app.savings.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 @Service
+@org.springframework.transaction.annotation.Transactional
 public class UsuarioService {
 
     @Autowired
@@ -17,7 +18,13 @@ public class UsuarioService {
     private PerfilUsuarioRepository perfilUsuarioRepository;
 
     @Autowired
-    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private FinanzaRepository finanzaRepository;
+
+    @Autowired
+    private HistorialInformeRepository historialInformeRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Usuario login(String usernameOrEmail, String password) {
         return usuarioRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
@@ -84,12 +91,61 @@ public class UsuarioService {
             return null;
         }
 
-        // Validar que el username no esté tomado por otro usuario
+        // Caso 1: Cambio de username (PK)
         if (!usuarioExistente.getUsername().equals(usuarioActualizado.getUsername())) {
             if (usuarioRepository.findByUsername(usuarioActualizado.getUsername()).isPresent()) {
                 throw new RuntimeException("El nombre de usuario ya existe");
             }
+
+            // [FIX] Liberar el email del usuario antiguo temporalmente para evitar Unique Constraint
+            String oldEmail = usuarioExistente.getEmail();
+            usuarioExistente.setEmail(oldEmail + "_temp_" + System.currentTimeMillis());
+            usuarioRepository.saveAndFlush(usuarioExistente);
+
+            // Crear nuevo usuario con los datos actualizados
+            Usuario nuevoUsuario = new Usuario();
+            nuevoUsuario.setUsername(usuarioActualizado.getUsername());
+            nuevoUsuario.setEmail(usuarioActualizado.getEmail());
+            
+            // Password
+             if (usuarioActualizado.getPassword() != null && !usuarioActualizado.getPassword().isEmpty()) {
+                nuevoUsuario.setPassword(passwordEncoder.encode(usuarioActualizado.getPassword()));
+            } else {
+                nuevoUsuario.setPassword(usuarioExistente.getPassword());
+            }
+
+             // Perfil
+            if (usuarioActualizado.getPerfil() != null) {
+                nuevoUsuario.setPerfil(perfilUsuarioRepository.findByNombre(usuarioActualizado.getPerfil().getNombre()).orElse(null));
+            } else {
+                nuevoUsuario.setPerfil(usuarioExistente.getPerfil());
+            }
+
+            // Guardar el nuevo usuario
+            nuevoUsuario = usuarioRepository.save(nuevoUsuario);
+
+            // Migrar Finanzas
+            java.util.List<com.app.savings.entities.Finanza> finanzas = finanzaRepository.findByUsuarioUsername(id);
+            for(com.app.savings.entities.Finanza f : finanzas) {
+                f.setUsuario(nuevoUsuario);
+                finanzaRepository.save(f);
+            }
+
+            // Migrar Informes
+            // IMPORTANTE: Usar el objeto usuarioExistente actualizado (tiene email cambiado pero mismo ID/Username)
+            java.util.List<com.app.savings.entities.HistorialInforme> informes = historialInformeRepository.findByUsuario(usuarioExistente);
+            for(com.app.savings.entities.HistorialInforme i : informes) {
+                i.setUsuario(nuevoUsuario);
+                historialInformeRepository.save(i);
+            }
+
+            // Eliminar el usuario antiguo
+            usuarioRepository.delete(usuarioExistente);
+
+            return nuevoUsuario;
         }
+
+        // Caso 2: El username no cambia (Update normal)
 
         // Validar que el email no esté tomado por otro usuario
         if (!usuarioExistente.getEmail().equals(usuarioActualizado.getEmail())) {
@@ -98,7 +154,6 @@ public class UsuarioService {
             }
         }
 
-        usuarioExistente.setUsername(usuarioActualizado.getUsername());
         usuarioExistente.setEmail(usuarioActualizado.getEmail());
 
         // Si hay una nueva contraseña, actualizarla
@@ -117,5 +172,27 @@ public class UsuarioService {
 
     public Optional<Usuario> findByUsername(String username) {
         return usuarioRepository.findByUsername(username);
+    }
+
+    public void deleteUsuario(String username) {
+        if (!usuarioRepository.existsById(username)) {
+            throw new RuntimeException("Usuario no encontrado");
+        }
+        // Primero eliminar dependencias o setear a null si fuera necesario,
+        // pero JPA Cascade podría manejarlo si estuviera configurado.
+        // Como no tengo CascadeType.ALL visible en las entidades, debería borrar
+        // manualmente si hay constraints.
+        // Asumiendo que OnDelete Action en DB es RESTRICT, debo borrar hijos.
+
+        Usuario u = usuarioRepository.findById(username).get();
+
+        java.util.List<com.app.savings.entities.Finanza> finanzas = finanzaRepository.findByUsuarioUsername(username);
+        finanzaRepository.deleteAll(finanzas);
+
+        java.util.List<com.app.savings.entities.HistorialInforme> informes = historialInformeRepository
+                .findByUsuario(u);
+        historialInformeRepository.deleteAll(informes);
+
+        usuarioRepository.deleteById(username);
     }
 }
