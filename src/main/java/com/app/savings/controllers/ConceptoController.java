@@ -29,4 +29,15 @@ public class ConceptoController {
     public void eliminar(@PathVariable Long id) {
         conceptoRepository.deleteById(id);
     }
+
+    @PutMapping("/{id}")
+    public org.springframework.http.ResponseEntity<Concepto> actualizar(@PathVariable Long id,
+            @RequestBody Concepto concepto) {
+        return conceptoRepository.findById(id)
+                .map(c -> {
+                    c.setNombre(concepto.getNombre());
+                    return org.springframework.http.ResponseEntity.ok(conceptoRepository.save(c));
+                })
+                .orElse(org.springframework.http.ResponseEntity.notFound().build());
+    }
 }
