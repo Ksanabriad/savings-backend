@@ -66,4 +66,37 @@ public class FinanzaController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(file);
     }
+
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<Finanza> getFinanzaPorId(@PathVariable Long id) {
+        Finanza finanza = finanzaService.getFinanzaPorId(id);
+        if (finanza != null) {
+            return ResponseEntity.ok(finanza);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Finanza> actualizarFinanza(
+            @PathVariable Long id,
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam("concepto") String concepto,
+            @RequestParam("cantidad") double cantidad,
+            @RequestParam("tipo") String tipo,
+            @RequestParam("medio") String medio,
+            @RequestParam("fecha") LocalDate fecha,
+            @RequestParam("username") String username) throws IOException {
+        Finanza actualizada = finanzaService.actualizarFinanza(id, file, concepto, cantidad, tipo, medio, fecha,
+                username);
+        if (actualizada != null) {
+            return ResponseEntity.ok(actualizada);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarFinanza(@PathVariable Long id) {
+        finanzaService.eliminarFinanza(id);
+        return ResponseEntity.noContent().build();
+    }
 }

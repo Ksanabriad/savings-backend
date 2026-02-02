@@ -40,4 +40,26 @@ public class UsuarioController {
     public List<Usuario> listarTodos() {
         return usuarioService.findAll();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuario> getUsuarioPorId(@PathVariable String id) {
+        Usuario usuario = usuarioService.findById(id);
+        if (usuario != null) {
+            return ResponseEntity.ok(usuario);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUsuario(@PathVariable String id, @RequestBody Usuario usuario) {
+        try {
+            Usuario actualizado = usuarioService.updateUsuario(id, usuario);
+            if (actualizado != null) {
+                return ResponseEntity.ok(actualizado);
+            }
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
