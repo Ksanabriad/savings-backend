@@ -14,4 +14,6 @@ public interface FinanzaRepository extends JpaRepository<Finanza, Long> {
     @Query("SELECT f FROM Finanza f WHERE f.usuario = :usuario AND YEAR(f.fecha) = :anio AND MONTH(f.fecha) = :mes")
     List<Finanza> findByUsuarioAndMesAndAnio(@Param("usuario") Usuario usuario, @Param("mes") int mes,
             @Param("anio") int anio);
+
+    Finanza findTopByUsuarioOrderByFechaAsc(Usuario usuario);
 }
