@@ -13,8 +13,6 @@ public class InformeInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("Iniciando validacion y generacion de informes faltantes...");
         informeService.generarInformesFaltantes();
-        System.out.println("Proceso de informes completado.");
     }
 }

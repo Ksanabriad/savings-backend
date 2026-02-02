@@ -102,11 +102,7 @@ public class InformeService {
                             try {
                                 generarInformeMensual(usuario.getUsername(), iterador.getMonthValue(),
                                         iterador.getYear());
-                                System.out.println(
-                                        "Informe generado para: " + usuario.getUsername() + " - " + nombreArchivo);
                             } catch (Exception e) {
-                                System.err.println("Error generando informe auto para " + usuario.getUsername() + ": "
-                                        + e.getMessage());
                             }
                         }
                     }
