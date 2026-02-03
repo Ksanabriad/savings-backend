@@ -3,6 +3,7 @@ package com.app.savings.controllers;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -98,5 +99,42 @@ public class FinanzaController {
     public ResponseEntity<Void> eliminarFinanza(@PathVariable Long id) {
         finanzaService.eliminarFinanza(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{username}/balance")
+    public ResponseEntity<Double> getBalance(@PathVariable String username) {
+        return ResponseEntity.ok(finanzaService.getBalance(username));
+    }
+
+    @GetMapping("/{username}/expenses-last-3-months")
+    public ResponseEntity<List<com.app.savings.dtos.MonthlyExpenseDto>> getLast3MonthsExpenses(
+            @PathVariable String username) {
+        return ResponseEntity.ok(finanzaService.getLast3MonthsExpenses(username));
+    }
+
+    @GetMapping("/{username}/income-last-3-months")
+    public ResponseEntity<List<com.app.savings.dtos.MonthlyExpenseDto>> getLast3MonthsIncome(
+            @PathVariable String username) {
+        return ResponseEntity.ok(finanzaService.getLast3MonthsIncome(username));
+    }
+
+    @GetMapping("/{username}/current-month-income")
+    public ResponseEntity<Double> getCurrentMonthIncome(@PathVariable String username) {
+        return ResponseEntity.ok(finanzaService.getCurrentMonthIncome(username));
+    }
+
+    @GetMapping("/{username}/current-month-expenses")
+    public ResponseEntity<Double> getCurrentMonthExpenses(@PathVariable String username) {
+        return ResponseEntity.ok(finanzaService.getCurrentMonthExpenses(username));
+    }
+
+    @GetMapping("/{username}/category-distribution")
+    public ResponseEntity<List<Map<String, Object>>> getCategoryDistribution(@PathVariable String username) {
+        return ResponseEntity.ok(finanzaService.getCategoryDistribution(username));
+    }
+
+    @GetMapping("/{username}/recent")
+    public ResponseEntity<List<Finanza>> getRecentTransactions(@PathVariable String username) {
+        return ResponseEntity.ok(finanzaService.getRecentTransactions(username, 3));
     }
 }
