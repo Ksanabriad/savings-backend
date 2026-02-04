@@ -20,13 +20,13 @@ INSERT INTO concepto (nombre) SELECT 'Comida' WHERE NOT EXISTS (SELECT 1 FROM co
 INSERT INTO concepto (nombre) SELECT 'Transporte' WHERE NOT EXISTS (SELECT 1 FROM concepto WHERE nombre = 'Transporte');
 INSERT INTO concepto (nombre) SELECT 'Otros' WHERE NOT EXISTS (SELECT 1 FROM concepto WHERE nombre = 'Otros');
 
--- Usuarios (Passwords: admin1234 and kate1234)
+-- Usuarios (Passwords: Admin1234 and Kate1234)
 INSERT INTO usuario (username, email, password, perfil_id) 
-SELECT 'admin', 'admin@easysave.com', '$2a$10$agBYblLkr1gMP6IjZhyoC.nrhou9Jl5.mmtGMCs7xzml0XHGQpGce', 1 
+SELECT 'admin', 'admin@easysave.com', '$2a$10$wxSs1mcK0NVGxKfqvPyDJ.msZXYsCMw3XVs49VzH72JNFtRxCFHNK', 1 
 WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE username = 'admin');
 
 INSERT INTO usuario (username, email, password, perfil_id) 
-SELECT 'katherin', 'katherin@easysave.com', '$2a$10$3eEdw45mZHhWWVtguQ9rgOanUkZg9Dj4zs.UE2zzubWeA1hrsdNvK', 2 
+SELECT 'katherin', 'katherin@easysave.com', '$2a$10$V16RMy7Fh7sAfm6Qqryl3uaZygBwg6SP6T8QdLdmnm1iltRgi/cJy', 2 
 WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE username = 'katherin');
 
 -- Finanzas

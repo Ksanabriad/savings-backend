@@ -57,7 +57,7 @@ public class UsuarioService {
         if (usuarioRepository.findByUsername("admin").isEmpty()) {
             Usuario admin = Usuario.builder()
                     .username("admin")
-                    .password(passwordEncoder.encode("admin1234"))
+                    .password(passwordEncoder.encode("Admin1234"))
                     .email("admin@easysave.com")
                     .perfil(perfilUsuarioRepository.findByNombre("ADMIN").orElse(null))
                     .build();
@@ -68,7 +68,7 @@ public class UsuarioService {
         if (usuarioRepository.findByUsername("katherin").isEmpty()) {
             Usuario user = Usuario.builder()
                     .username("katherin")
-                    .password(passwordEncoder.encode("kate1234"))
+                    .password(passwordEncoder.encode("Kate1234"))
                     .email("katherin@easysave.com")
                     .perfil(perfilUsuarioRepository.findByNombre("USER").orElse(null))
                     .build();
