@@ -112,7 +112,7 @@ public class InformeService {
         // Tabla de movimientos
         PdfPTable table = new PdfPTable(5);
         table.setWidthPercentage(100);
-        table.setWidths(new float[] { 2, 4, 1.5f, 1.5f, 2 });
+        table.setWidths(new float[] { 2, 3.5f, 1.5f, 2f, 2 });
         table.setSpacingBefore(10);
 
         // Cabecera
