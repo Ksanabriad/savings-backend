@@ -135,7 +135,7 @@ public class InformeService {
             table.addCell(createStyledCell(f.getTipo().getNombre(), cellFont, Element.ALIGN_CENTER));
             table.addCell(createStyledCell(f.getMedio().getNombre(), cellFont, Element.ALIGN_CENTER));
 
-            String cantidadStr = String.format("%.2f €", f.getCantidad());
+            String cantidadStr = String.format(Locale.forLanguageTag("es-ES"), "%,.2f €", f.getCantidad());
             PdfPCell cantCell = createStyledCell(cantidadStr, cellFont, Element.ALIGN_RIGHT);
             if (f.getTipo().getNombre().equalsIgnoreCase("INGRESO")) {
                 totalIngresos += f.getCantidad();
@@ -156,16 +156,19 @@ public class InformeService {
         resumenTable.setHorizontalAlignment(Element.ALIGN_RIGHT);
 
         resumenTable.addCell(getSummaryCell("Total Ingresos:", cellFont));
-        resumenTable.addCell(getSummaryValueCell(String.format("%.2f €", totalIngresos), cellFont));
+        resumenTable.addCell(
+                getSummaryValueCell(String.format(Locale.forLanguageTag("es-ES"), "%,.2f €", totalIngresos), cellFont));
 
         resumenTable.addCell(getSummaryCell("Total Egresos:", cellFont));
-        resumenTable.addCell(getSummaryValueCell(String.format("%.2f €", totalEgresos), cellFont));
+        resumenTable.addCell(
+                getSummaryValueCell(String.format(Locale.forLanguageTag("es-ES"), "%,.2f €", totalEgresos), cellFont));
 
         double balance = totalIngresos - totalEgresos;
         Font balFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11,
                 balance >= 0 ? new Color(39, 174, 96) : new Color(192, 57, 43));
         resumenTable.addCell(getSummaryCell("BALANCE NETO:", balFont));
-        resumenTable.addCell(getSummaryValueCell(String.format("%.2f €", balance), balFont));
+        resumenTable.addCell(
+                getSummaryValueCell(String.format(Locale.forLanguageTag("es-ES"), "%,.2f €", balance), balFont));
 
         document.add(resumenTable);
 
