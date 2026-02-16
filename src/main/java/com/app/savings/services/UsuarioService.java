@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
+import com.app.savings.entities.*;
 
 @Service
 @org.springframework.transaction.annotation.Transactional
@@ -125,16 +126,15 @@ public class UsuarioService {
             nuevoUsuario = usuarioRepository.save(nuevoUsuario);
 
             // Migrar Finanzas
-            java.util.List<com.app.savings.entities.Finanza> finanzas = finanzaRepository.findByUsuarioUsername(id);
-            for(com.app.savings.entities.Finanza f : finanzas) {
+            java.util.List<Finanza> finanzas = finanzaRepository.findByUsuarioUsername(id);
+            for(Finanza f : finanzas) {
                 f.setUsuario(nuevoUsuario);
                 finanzaRepository.save(f);
             }
 
             // Migrar Informes
-            // IMPORTANTE: Usar el objeto usuarioExistente actualizado (tiene email cambiado pero mismo ID/Username)
-            java.util.List<com.app.savings.entities.HistorialInforme> informes = historialInformeRepository.findByUsuario(usuarioExistente);
-            for(com.app.savings.entities.HistorialInforme i : informes) {
+            java.util.List<HistorialInforme> informes = historialInformeRepository.findByUsuario(usuarioExistente);
+            for(HistorialInforme i : informes) {
                 i.setUsuario(nuevoUsuario);
                 historialInformeRepository.save(i);
             }
@@ -178,18 +178,13 @@ public class UsuarioService {
         if (!usuarioRepository.existsById(username)) {
             throw new RuntimeException("Usuario no encontrado");
         }
-        // Primero eliminar dependencias o setear a null si fuera necesario,
-        // pero JPA Cascade podría manejarlo si estuviera configurado.
-        // Como no tengo CascadeType.ALL visible en las entidades, debería borrar
-        // manualmente si hay constraints.
-        // Asumiendo que OnDelete Action en DB es RESTRICT, debo borrar hijos.
 
         Usuario u = usuarioRepository.findById(username).get();
 
-        java.util.List<com.app.savings.entities.Finanza> finanzas = finanzaRepository.findByUsuarioUsername(username);
+        java.util.List<Finanza> finanzas = finanzaRepository.findByUsuarioUsername(username);
         finanzaRepository.deleteAll(finanzas);
 
-        java.util.List<com.app.savings.entities.HistorialInforme> informes = historialInformeRepository
+        java.util.List<HistorialInforme> informes = historialInformeRepository
                 .findByUsuario(u);
         historialInformeRepository.deleteAll(informes);
 

@@ -17,6 +17,7 @@ import com.app.savings.entities.Finanza;
 import com.app.savings.entities.MedioPago;
 import com.app.savings.entities.TipoFinanza;
 import com.app.savings.entities.Usuario;
+import com.app.savings.dtos.MonthlyExpenseDto;
 
 import com.app.savings.repository.*;
 
@@ -107,7 +108,7 @@ public class FinanzaService {
 
         String filePathString = finanzaExistente.getFile();
 
-        // Si se sube un nuevo archivo, reemplazamos el anterior
+        // Si se sube un nuevo archivo, reemplaza el anterior
         if (file != null && !file.isEmpty()) {
             Path folderPath = Paths.get(System.getProperty("user.home"), "enset-data", "finanzas");
             if (!Files.exists(folderPath)) {
@@ -150,17 +151,17 @@ public class FinanzaService {
         return ingresos - egresos;
     }
 
-    public List<com.app.savings.dtos.MonthlyExpenseDto> getLast3MonthsExpenses(String username) {
+    public List<MonthlyExpenseDto> getLast3MonthsExpenses(String username) {
         LocalDate now = LocalDate.now();
-        // Start of current month (exclusive boundary for query)
+        // Mes actual
         LocalDate endDate = now.withDayOfMonth(1);
-        // 3 months prior
+        // 3 meses antes
         LocalDate startDate = endDate.minusMonths(3);
 
         return finanzaRepository.findMonthlyExpenses(username, startDate, endDate);
     }
 
-    public List<com.app.savings.dtos.MonthlyExpenseDto> getLast3MonthsIncome(String username) {
+    public List<MonthlyExpenseDto> getLast3MonthsIncome(String username) {
         LocalDate now = LocalDate.now();
         LocalDate endDate = now.withDayOfMonth(1);
         LocalDate startDate = endDate.minusMonths(3);

@@ -9,8 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
-// Permitir CORS globalmente para este controlador si es necesario, o confiar en
-// configuración global
 @CrossOrigin(origins = "*")
 public class UsuarioController {
 

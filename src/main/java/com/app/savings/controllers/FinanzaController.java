@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.app.savings.entities.*;
 import com.app.savings.repository.*;
 import com.app.savings.services.FinanzaService;
+import com.app.savings.dtos.MonthlyExpenseDto;
 
 @RestController
 @RequestMapping("/api/finanzas")
@@ -107,13 +108,13 @@ public class FinanzaController {
     }
 
     @GetMapping("/{username}/expenses-last-3-months")
-    public ResponseEntity<List<com.app.savings.dtos.MonthlyExpenseDto>> getLast3MonthsExpenses(
+    public ResponseEntity<List<MonthlyExpenseDto>> getLast3MonthsExpenses(
             @PathVariable String username) {
         return ResponseEntity.ok(finanzaService.getLast3MonthsExpenses(username));
     }
 
     @GetMapping("/{username}/income-last-3-months")
-    public ResponseEntity<List<com.app.savings.dtos.MonthlyExpenseDto>> getLast3MonthsIncome(
+    public ResponseEntity<List<MonthlyExpenseDto>> getLast3MonthsIncome(
             @PathVariable String username) {
         return ResponseEntity.ok(finanzaService.getLast3MonthsIncome(username));
     }

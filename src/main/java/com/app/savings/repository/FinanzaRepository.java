@@ -39,7 +39,7 @@ public interface FinanzaRepository extends JpaRepository<Finanza, Long> {
                         "AND f.fecha >= :startDate AND f.fecha < :endDate " +
                         "GROUP BY EXTRACT(YEAR FROM f.fecha), EXTRACT(MONTH FROM f.fecha) " +
                         "ORDER BY EXTRACT(YEAR FROM f.fecha) DESC, EXTRACT(MONTH FROM f.fecha) DESC")
-        List<com.app.savings.dtos.MonthlyExpenseDto> findMonthlyIncome(@Param("username") String username,
+        List<MonthlyExpenseDto> findMonthlyIncome(@Param("username") String username,
                         @Param("startDate") java.time.LocalDate startDate,
                         @Param("endDate") java.time.LocalDate endDate);
 

@@ -56,7 +56,7 @@ public class InformeService {
         }
 
         String mesNombre = java.time.Month.of(mes).getDisplayName(TextStyle.FULL, Locale.forLanguageTag("es-ES"));
-        // Capitalize first letter
+        // Primera letra mayuscula
         mesNombre = mesNombre.substring(0, 1).toUpperCase() + mesNombre.substring(1).toLowerCase();
 
         String nombreArchivo = username + "_" + mesNombre + "_" + anio + ".pdf";
