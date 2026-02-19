@@ -9,8 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
-// Permitir CORS globalmente para este controlador si es necesario, o confiar en
-// configuración global
 @CrossOrigin(origins = "*")
 public class UsuarioController {
 
@@ -58,6 +56,16 @@ public class UsuarioController {
                 return ResponseEntity.ok(actualizado);
             }
             return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUsuario(@PathVariable String id) {
+        try {
+            usuarioService.deleteUsuario(id);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

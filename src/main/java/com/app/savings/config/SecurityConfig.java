@@ -17,13 +17,15 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/usuarios/**").permitAll()
                         .requestMatchers("/estudiantes/**", "/pagos/**", "/pagoFile/**").permitAll()
                         .requestMatchers("/api/finanzas/**").permitAll()
                         .requestMatchers("/api/conceptos/**").permitAll()
                         .requestMatchers("/api/informes/**").permitAll()
-                        .anyRequest().authenticated());
+                        .anyRequest().permitAll());
         return http.build();
     }
 

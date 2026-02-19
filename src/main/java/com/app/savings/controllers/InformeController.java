@@ -61,4 +61,10 @@ public class InformeController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(content);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarInforme(@PathVariable Long id) {
+        informeService.eliminarInforme(id);
+        return ResponseEntity.ok().build();
+    }
 }

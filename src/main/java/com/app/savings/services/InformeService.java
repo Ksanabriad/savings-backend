@@ -56,11 +56,11 @@ public class InformeService {
         }
 
         String mesNombre = java.time.Month.of(mes).getDisplayName(TextStyle.FULL, Locale.forLanguageTag("es-ES"));
-        // Capitalize first letter
+        // Primera letra mayuscula
         mesNombre = mesNombre.substring(0, 1).toUpperCase() + mesNombre.substring(1).toLowerCase();
 
         String nombreArchivo = username + "_" + mesNombre + "_" + anio + ".pdf";
-        LocalDate fechaGeneracion = lastDayOfMonth;
+        LocalDate fechaGeneracion = LocalDate.now();
 
         byte[] pdfContent = generarContenidoPDF(usuario, mesNombre, anio, finanzas, fechaGeneracion);
 
@@ -73,48 +73,6 @@ public class InformeService {
                 .build();
 
         return historialInformeRepository.save(historial);
-    }
-
-    public void generarInformesFaltantes() {
-        List<Usuario> usuarios = usuarioRepository.findAll();
-        for (Usuario usuario : usuarios) {
-            Finanza oldesFinanza = finanzaRepository.findTopByUsuarioOrderByFechaAsc(usuario);
-            if (oldesFinanza != null) {
-                LocalDate fechaInicio = oldesFinanza.getFecha();
-                LocalDate fechaActual = LocalDate.now();
-
-                LocalDate iterador = LocalDate.of(fechaInicio.getYear(), fechaInicio.getMonth(), 1);
-
-                while (iterador.isBefore(fechaActual)) {
-                    // Check if month is completed
-                    LocalDate finDeMes = iterador.with(java.time.temporal.TemporalAdjusters.lastDayOfMonth());
-
-                    if (fechaActual.isAfter(finDeMes)) {
-                        // Candidate for report
-                        String mesNombre = iterador.getMonth().getDisplayName(TextStyle.FULL,
-                                Locale.forLanguageTag("es-ES"));
-                        mesNombre = mesNombre.substring(0, 1).toUpperCase() + mesNombre.substring(1).toLowerCase();
-                        String nombreArchivo = usuario.getUsername() + "_" + mesNombre + "_" + iterador.getYear()
-                                + ".pdf";
-
-                        if (!historialInformeRepository.existsByUsuarioAndNombreArchivo(usuario, nombreArchivo)) {
-                            // Generate it
-                            try {
-                                generarInformeMensual(usuario.getUsername(), iterador.getMonthValue(),
-                                        iterador.getYear());
-                                System.out.println(
-                                        "Informe generado para: " + usuario.getUsername() + " - " + nombreArchivo);
-                            } catch (Exception e) {
-                                System.err.println("Error generando informe auto para " + usuario.getUsername() + ": "
-                                        + e.getMessage());
-                            }
-                        }
-                    }
-                    // Next month
-                    iterador = iterador.plusMonths(1);
-                }
-            }
-        }
     }
 
     public byte[] generarContenidoPDF(Usuario usuario, String mesNombre, int anio, List<Finanza> finanzas,
@@ -154,7 +112,7 @@ public class InformeService {
         // Tabla de movimientos
         PdfPTable table = new PdfPTable(5);
         table.setWidthPercentage(100);
-        table.setWidths(new float[] { 2, 4, 1.5f, 1.5f, 2 });
+        table.setWidths(new float[] { 2, 3.5f, 1.5f, 2f, 2 });
         table.setSpacingBefore(10);
 
         // Cabecera
@@ -177,7 +135,7 @@ public class InformeService {
             table.addCell(createStyledCell(f.getTipo().getNombre(), cellFont, Element.ALIGN_CENTER));
             table.addCell(createStyledCell(f.getMedio().getNombre(), cellFont, Element.ALIGN_CENTER));
 
-            String cantidadStr = String.format("%.2f €", f.getCantidad());
+            String cantidadStr = String.format(Locale.forLanguageTag("es-ES"), "%,.2f €", f.getCantidad());
             PdfPCell cantCell = createStyledCell(cantidadStr, cellFont, Element.ALIGN_RIGHT);
             if (f.getTipo().getNombre().equalsIgnoreCase("INGRESO")) {
                 totalIngresos += f.getCantidad();
@@ -198,16 +156,19 @@ public class InformeService {
         resumenTable.setHorizontalAlignment(Element.ALIGN_RIGHT);
 
         resumenTable.addCell(getSummaryCell("Total Ingresos:", cellFont));
-        resumenTable.addCell(getSummaryValueCell(String.format("%.2f €", totalIngresos), cellFont));
+        resumenTable.addCell(
+                getSummaryValueCell(String.format(Locale.forLanguageTag("es-ES"), "%,.2f €", totalIngresos), cellFont));
 
         resumenTable.addCell(getSummaryCell("Total Egresos:", cellFont));
-        resumenTable.addCell(getSummaryValueCell(String.format("%.2f €", totalEgresos), cellFont));
+        resumenTable.addCell(
+                getSummaryValueCell(String.format(Locale.forLanguageTag("es-ES"), "%,.2f €", totalEgresos), cellFont));
 
         double balance = totalIngresos - totalEgresos;
         Font balFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11,
                 balance >= 0 ? new Color(39, 174, 96) : new Color(192, 57, 43));
         resumenTable.addCell(getSummaryCell("BALANCE NETO:", balFont));
-        resumenTable.addCell(getSummaryValueCell(String.format("%.2f €", balance), balFont));
+        resumenTable.addCell(
+                getSummaryValueCell(String.format(Locale.forLanguageTag("es-ES"), "%,.2f €", balance), balFont));
 
         document.add(resumenTable);
 
@@ -285,5 +246,9 @@ public class InformeService {
         historialInformeRepository.save(historial);
 
         return content;
+    }
+
+    public void eliminarInforme(Long id) {
+        historialInformeRepository.deleteById(id);
     }
 }

@@ -17,6 +17,7 @@ import com.app.savings.entities.Finanza;
 import com.app.savings.entities.MedioPago;
 import com.app.savings.entities.TipoFinanza;
 import com.app.savings.entities.Usuario;
+import com.app.savings.dtos.MonthlyExpenseDto;
 
 import com.app.savings.repository.*;
 
@@ -107,7 +108,7 @@ public class FinanzaService {
 
         String filePathString = finanzaExistente.getFile();
 
-        // Si se sube un nuevo archivo, reemplazamos el anterior
+        // Si se sube un nuevo archivo, reemplaza el anterior
         if (file != null && !file.isEmpty()) {
             Path folderPath = Paths.get(System.getProperty("user.home"), "enset-data", "finanzas");
             if (!Files.exists(folderPath)) {
@@ -138,5 +139,59 @@ public class FinanzaService {
 
     public void eliminarFinanza(Long id) {
         finanzaRepository.deleteById(id);
+    }
+
+    public Double getBalance(String username) {
+        Double ingresos = finanzaRepository.sumByUsuarioAndTipo(username, "INGRESO");
+        Double egresos = finanzaRepository.sumByUsuarioAndTipo(username, "EGRESO");
+        if (ingresos == null)
+            ingresos = 0.0;
+        if (egresos == null)
+            egresos = 0.0;
+        return ingresos - egresos;
+    }
+
+    public List<MonthlyExpenseDto> getLast3MonthsExpenses(String username) {
+        LocalDate now = LocalDate.now();
+        // Mes actual
+        LocalDate endDate = now.withDayOfMonth(1);
+        // 3 meses antes
+        LocalDate startDate = endDate.minusMonths(3);
+
+        return finanzaRepository.findMonthlyExpenses(username, startDate, endDate);
+    }
+
+    public List<MonthlyExpenseDto> getLast3MonthsIncome(String username) {
+        LocalDate now = LocalDate.now();
+        LocalDate endDate = now.withDayOfMonth(1);
+        LocalDate startDate = endDate.minusMonths(3);
+
+        return finanzaRepository.findMonthlyIncome(username, startDate, endDate);
+    }
+
+    public Double getCurrentMonthIncome(String username) {
+        LocalDate now = LocalDate.now();
+        LocalDate startOfMonth = now.withDayOfMonth(1);
+        Double income = finanzaRepository.sumByUsuarioAndTipoAndDateRange(username, "INGRESO", startOfMonth,
+                now.plusDays(1));
+        return income != null ? income : 0.0;
+    }
+
+    public Double getCurrentMonthExpenses(String username) {
+        LocalDate now = LocalDate.now();
+        LocalDate startOfMonth = now.withDayOfMonth(1);
+        Double expenses = finanzaRepository.sumByUsuarioAndTipoAndDateRange(username, "EGRESO", startOfMonth,
+                now.plusDays(1));
+        return expenses != null ? expenses : 0.0;
+    }
+
+    public List<java.util.Map<String, Object>> getCategoryDistribution(String username) {
+        LocalDate now = LocalDate.now();
+        LocalDate startOfMonth = now.withDayOfMonth(1);
+        return finanzaRepository.findCategoryDistribution(username, startOfMonth, now.plusDays(1));
+    }
+
+    public List<Finanza> getRecentTransactions(String username, int limit) {
+        return finanzaRepository.findTopByUsuarioUsernameOrderByFechaDesc(username, limit);
     }
 }

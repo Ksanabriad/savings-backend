@@ -20,13 +20,13 @@ INSERT INTO concepto (nombre) SELECT 'Comida' WHERE NOT EXISTS (SELECT 1 FROM co
 INSERT INTO concepto (nombre) SELECT 'Transporte' WHERE NOT EXISTS (SELECT 1 FROM concepto WHERE nombre = 'Transporte');
 INSERT INTO concepto (nombre) SELECT 'Otros' WHERE NOT EXISTS (SELECT 1 FROM concepto WHERE nombre = 'Otros');
 
--- Usuarios (Passwords: admin1234 and kate1234)
+-- Usuarios (Passwords: Admin1234 and Kate1234)
 INSERT INTO usuario (username, email, password, perfil_id) 
-SELECT 'admin', 'admin@easysave.com', '$2a$10$agBYblLkr1gMP6IjZhyoC.nrhou9Jl5.mmtGMCs7xzml0XHGQpGce', 1 
+SELECT 'admin', 'admin@easysave.com', '$2a$10$wxSs1mcK0NVGxKfqvPyDJ.msZXYsCMw3XVs49VzH72JNFtRxCFHNK', 1 
 WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE username = 'admin');
 
 INSERT INTO usuario (username, email, password, perfil_id) 
-SELECT 'katherin', 'katherin@easysave.com', '$2a$10$3eEdw45mZHhWWVtguQ9rgOanUkZg9Dj4zs.UE2zzubWeA1hrsdNvK', 2 
+SELECT 'katherin', 'katherin@easysave.com', '$2a$10$V16RMy7Fh7sAfm6Qqryl3uaZygBwg6SP6T8QdLdmnm1iltRgi/cJy', 2 
 WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE username = 'katherin');
 
 -- Finanzas
@@ -37,36 +37,6 @@ WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM conc
 INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
 SELECT (SELECT id FROM concepto WHERE nombre = 'Arriendo'), 1500, CURRENT_DATE, 2, 3, 'admin'
 WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Arriendo') AND usuario_username = 'admin');
-
--- Finanzas OCTUBRE 2025 para katherin (7 movimientos)
-INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Sueldo'), 3500, '2025-10-01', 1, 3, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Sueldo') AND fecha = '2025-10-01' AND usuario_username = 'katherin');
-
-INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Arriendo'), 1200, '2025-10-05', 2, 3, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Arriendo') AND fecha = '2025-10-05' AND usuario_username = 'katherin');
-
-INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Servicios'), 150, '2025-10-08', 2, 1, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Servicios') AND fecha = '2025-10-08' AND usuario_username = 'katherin');
-
-INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Comida'), 450, '2025-10-12', 2, 1, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Comida') AND fecha = '2025-10-12' AND usuario_username = 'katherin');
-
-INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Transporte'), 80, '2025-10-15', 2, 1, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Transporte') AND fecha = '2025-10-15' AND usuario_username = 'katherin');
-
-INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 1800, '2025-10-20', 1, 3, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2025-10-20' AND usuario_username = 'katherin');
-
-INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 50, '2025-10-28', 2, 4, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2025-10-28' AND usuario_username = 'katherin');
-
 
 -- Finanzas NOVIEMBRE 2025 para katherin (9 movimientos)
 INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
@@ -105,8 +75,7 @@ INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_us
 SELECT (SELECT id FROM concepto WHERE nombre = 'Comida'), 380, '2025-11-28', 2, 1, 'katherin'
 WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Comida') AND fecha = '2025-11-28' AND usuario_username = 'katherin');
 
-
--- Finanzas DICIEMBRE 2025 para katherin (11 movimientos)
+-- Finanzas DICIEMBRE 2025 para katherin (7 movimientos)
 INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
 SELECT (SELECT id FROM concepto WHERE nombre = 'Sueldo'), 3500, '2025-12-01', 1, 3, 'katherin'
 WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Sueldo') AND fecha = '2025-12-01' AND usuario_username = 'katherin');
@@ -116,39 +85,103 @@ SELECT (SELECT id FROM concepto WHERE nombre = 'Arriendo'), 1200, '2025-12-05', 
 WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Arriendo') AND fecha = '2025-12-05' AND usuario_username = 'katherin');
 
 INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Servicios'), 180, '2025-12-07', 2, 1, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Servicios') AND fecha = '2025-12-07' AND usuario_username = 'katherin');
+SELECT (SELECT id FROM concepto WHERE nombre = 'Servicios'), 150, '2025-12-08', 2, 1, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Servicios') AND fecha = '2025-12-08' AND usuario_username = 'katherin');
 
 INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Comida'), 600, '2025-12-10', 2, 1, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Comida') AND fecha = '2025-12-10' AND usuario_username = 'katherin');
+SELECT (SELECT id FROM concepto WHERE nombre = 'Comida'), 450, '2025-12-12', 2, 1, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Comida') AND fecha = '2025-12-12' AND usuario_username = 'katherin');
 
 INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Transporte'), 95, '2025-12-12', 2, 1, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Transporte') AND fecha = '2025-12-12' AND usuario_username = 'katherin');
+SELECT (SELECT id FROM concepto WHERE nombre = 'Transporte'), 80, '2025-12-15', 2, 1, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Transporte') AND fecha = '2025-12-15' AND usuario_username = 'katherin');
 
 INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 2500, '2025-12-14', 1, 3, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2025-12-14' AND usuario_username = 'katherin');
-
-INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 450, '2025-12-16', 2, 2, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2025-12-16' AND usuario_username = 'katherin');
-
-INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 50, '2025-12-20', 2, 4, 'katherin'
+SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 1800, '2025-12-20', 1, 3, 'katherin'
 WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2025-12-20' AND usuario_username = 'katherin');
 
 INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Comida'), 420, '2025-12-22', 2, 1, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Comida') AND fecha = '2025-12-22' AND usuario_username = 'katherin');
+SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 50, '2025-12-28', 2, 4, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2025-12-28' AND usuario_username = 'katherin');
+
+-- Finanzas ENERO 2026 para katherin (9 movimientos)
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Sueldo'), 3500, '2026-01-01', 1, 3, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Sueldo') AND fecha = '2026-01-01' AND usuario_username = 'katherin');
 
 INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 280, '2025-12-26', 2, 1, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2025-12-26' AND usuario_username = 'katherin');
+SELECT (SELECT id FROM concepto WHERE nombre = 'Arriendo'), 1200, '2026-01-05', 2, 3, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Arriendo') AND fecha = '2026-01-05' AND usuario_username = 'katherin');
 
 INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
-SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 1500, '2025-12-30', 1, 3, 'katherin'
-WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2025-12-30' AND usuario_username = 'katherin');
+SELECT (SELECT id FROM concepto WHERE nombre = 'Servicios'), 165, '2026-01-07', 2, 1, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Servicios') AND fecha = '2026-01-07' AND usuario_username = 'katherin');
 
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Comida'), 520, '2026-01-10', 2, 1, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Comida') AND fecha = '2026-01-10' AND usuario_username = 'katherin');
 
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Transporte'), 90, '2026-01-12', 2, 1, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Transporte') AND fecha = '2026-01-12' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 2200, '2026-01-15', 1, 3, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2026-01-15' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 200, '2026-01-18', 2, 1, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2026-01-18' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 50, '2026-01-22', 2, 4, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2026-01-22' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Comida'), 380, '2026-01-28', 2, 1, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Comida') AND fecha = '2026-01-28' AND usuario_username = 'katherin');
+
+-- Finanzas FEBRERO 2026 para katherin (11 movimientos)
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Sueldo'), 3500, '2026-02-01', 1, 3, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM  concepto WHERE nombre = 'Sueldo') AND fecha = '2026-02-01' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Arriendo'), 1200, '2026-02-05', 2, 3, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Arriendo') AND fecha = '2026-02-05' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Servicios'), 180, '2026-02-07', 2, 1, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Servicios') AND fecha = '2026-02-07' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 50, '2026-02-08', 2, 4, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2026-02-08' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Comida'), 600, '2026-02-10', 2, 1, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Comida') AND fecha = '2026-02-10' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Comida'), 420, '2026-02-11', 2, 1, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Comida') AND fecha = '2026-02-11' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Transporte'), 95, '2026-02-12', 2, 1, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Transporte') AND fecha = '2026-02-12' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 2500, '2026-02-14', 1, 3, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2026-02-14' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 280, '2026-02-15', 2, 1, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2026-02-15' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 450, '2026-02-16', 2, 2, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2026-02-16' AND usuario_username = 'katherin');
+
+INSERT INTO finanza (concepto_id, cantidad, fecha, tipo_id, medio_id, usuario_username)
+SELECT (SELECT id FROM concepto WHERE nombre = 'Otros'), 1500, '2026-02-16', 1, 3, 'katherin'
+WHERE NOT EXISTS (SELECT 1 FROM finanza WHERE concepto_id = (SELECT id FROM concepto WHERE nombre = 'Otros') AND fecha = '2026-02-16' AND usuario_username = 'katherin');
